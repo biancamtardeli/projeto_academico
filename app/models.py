@@ -9,10 +9,18 @@ class Ocupacao(models.Model):
     def __str__(self):
         return self.nome
 
+class UF(models.Model):
+    sigla = models.CharField(max_length=2, default='')
+
+    class Meta:
+        verbose_name_plural='Unidades federativas'
+
+    def __str__(self):
+        return self.sigla
 
 class Cidade(models.Model):
-    nome = models.CharField(max_length=100)
-    UF = models.CharField(max_length=2)
+    nome = models.CharField(max_length=100, default='')
+    UF = models.ForeignKey(UF, on_delete=models.CASCADE, default='')
 
     class Meta:
         verbose_name_plural = "Cidades"
@@ -64,31 +72,72 @@ class Turma(models.Model):
     def __str__(self):
         return self.nome
     
-
+#Superclasse
 class Pessoa(models.Model):
     nome = models.CharField(max_length=100, default='')
-    nome_do_pai = models.CharField(max_length=100, verbose_name="mãe", default='')
-    nome_da_mae = models.CharField(max_length=100, verbose_name="pai", default='')
-    cpf = models.CharField(max_length=11, default=0)
-    data_nasc = models.DateField(default='2000-01-01', verbose_name="data de nascimento")
     email = models.URLField(default='')
-    cidade = models.ForeignKey(Cidade, on_delete=models.CASCADE, default='')
-    ocupacao = models.ForeignKey(Ocupacao, on_delete=models.CASCADE, default='')
-    turma = models.ForeignKey(Turma, on_delete=models.CASCADE, default='')
+    cidade = models.ForeignKey(Cidade, on_delete=models.CASCADE, default='') 
 
     class Meta:
         verbose_name_plural = "Pessoas"
 
     def __str__(self):
         return f'{self.nome} {self.ocupacao}'
+    
+#Subclasse  
+class PessoaFisica(Pessoa):
+    nome_do_pai = models.CharField(max_length=100, verbose_name="mãe", default='')
+    nome_da_mae = models.CharField(max_length=100, verbose_name="pai", default='')
+    cpf = models.CharField(max_length=11, default=0)
+    data_nasc = models.DateField(default='2000-01-01', verbose_name="data de nascimento")
+
+    class Meta:
+        verbose_name = "Pessoa Física"
+        verbose_name_plural = "Pessoas Físicas"
+
+    def __str__(self):
+        return self.nome
+    
+class Aluno(PessoaFisica):   
+    turma = models.ForeignKey(Turma, on_delete=models.CASCADE, default='')
+
+    class Meta:
+        verbose_name = "Aluno"
+        verbose_name_plural = "Alunos"
+
+    def __str__(self):
+        return self.nome
+    
+class Funcionario(PessoaFisica):   
+    ocupacao = models.ForeignKey(Ocupacao, on_delete=models.CASCADE, default='')
+
+    class Meta:
+        verbose_name = "Funcionário"
+        verbose_name_plural = "Funcionários"
+
+    def __str__(self):
+        return self.nome
+    
+
+#Subclasse    
+class PessoaJuridica(Pessoa):
+    cnpj = models.CharField(default='')
+    razao_social = models.CharField(max_length=255, default='')
+    data_fundacao = models.DateField(default='2000-01-01')
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.nome
 
 
 class Curso(models.Model):
-    nome = models.CharField(max_length=100)
-    carga_horaria_total = models.IntegerField(verbose_name="carga horária")
-    duracao_meses = models.IntegerField(verbose_name="duração")
-    area_saber = models.ForeignKey(Area, on_delete=models.CASCADE)
-    instituicao = models.ForeignKey(Instituicao, on_delete=models.CASCADE) 
+    nome = models.CharField(max_length=100,  default='')
+    carga_horaria_total = models.IntegerField(verbose_name="carga horária",  default=0)
+    duracao_meses = models.IntegerField(verbose_name="duração", default=0)
+    area_saber = models.ForeignKey(Area, on_delete=models.CASCADE, default='')
+    instituicao = models.ForeignKey(Instituicao, on_delete=models.CASCADE, default='') 
 
     class Meta:
         verbose_name_plural = "Cursos"
@@ -97,9 +146,10 @@ class Curso(models.Model):
         return f'{self.nome} - {self.area_saber}'
     
 class Disciplina(models.Model):
-    nome = models.CharField(max_length=100)
-    area_saber = models.ForeignKey(Area, on_delete=models.CASCADE)
-    curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
+    nome = models.CharField(max_length=100, default='')
+    area_saber = models.ForeignKey(Area, on_delete=models.CASCADE, default='')
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE, default='')
+    pessoa = models.ForeignKey(Pessoa, on_delete=models.CASCADE, default='')
 
     class Meta:
         verbose_name_plural = "Disciplinas"
@@ -165,7 +215,7 @@ class Avaliacao(models.Model):
     disciplina = models.ForeignKey(Disciplina, on_delete=models.CASCADE)
     nota = models.DecimalField(max_digits=5, decimal_places=2)
     tipo_avaliacao = models.ForeignKey(TipoAvaliacao, on_delete=models.CASCADE, default='')
-
+    pessoa = models.ForeignKey(Pessoa, on_delete=models.CASCADE, default='')
 
     class Meta:
          verbose_name_plural = "Avaliações"

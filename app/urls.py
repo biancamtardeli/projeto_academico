@@ -19,5 +19,22 @@ from django.urls import include, path
 from .views import *
 
 urlpatterns = [
-      path('', IndexView.as_view(), name='index')
+    path('', IndexView.as_view(), name='index'),
+    path('alunos/', AlunoView.as_view(), name='aluno'),
+    path('ocupacao/', OcupacaoView.as_view(), name='ocupacao'),
+    path('uf/', UfView.as_view(), name='uf'),
+    path('matricula/', MatriculaView.as_view(), name='matricula'),
+    path('cidade/', CidadeView.as_view(), name='cidade'),
+    path('ocorrencia/', OcorrenciaView.as_view(), name='ocorrencia'),
+    path('instituicao/', InstituicaoView.as_view(), name='instituicao'),
+    path('frequencia/', FrequenciaView.as_view(), name='frequencia'),
+    path('area/', AreaView.as_view(), name='area'),
+    path('curso/', CursoView.as_view(), name='curso'),
+    path('turno/', TurnoView.as_view(), name='turno'),
+    path('disciplina/', DisciplinaView.as_view(), name='disciplina'),
+    path('pessoa/', PessoaView.as_view(), name='pessoa'),
+    path('avaliacao/', AvaliacaoView.as_view(), name='avaliacao'),
+    path('funcionario/', FuncionarioView.as_view(), name='funcionario'),
+    path('turma/', TurmaView.as_view(), name='turma'),
+    path('tipo_avaliacao/', TipoAvaliacaoView.as_view(), name='tipo_avaliacao')
 ]
