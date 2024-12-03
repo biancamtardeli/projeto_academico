@@ -75,7 +75,7 @@ class Turma(models.Model):
 #Superclasse
 class Pessoa(models.Model):
     nome = models.CharField(max_length=100, default='')
-    email = models.URLField(default='')
+    email = models.EmailField(default='')
     cidade = models.ForeignKey(Cidade, on_delete=models.CASCADE, default='') 
 
     class Meta:
@@ -149,7 +149,7 @@ class Disciplina(models.Model):
     nome = models.CharField(max_length=100, default='')
     area_saber = models.ForeignKey(Area, on_delete=models.CASCADE, default='')
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE, default='')
-    pessoa = models.ForeignKey(Pessoa, on_delete=models.CASCADE, default='')
+    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE, default='')
 
     class Meta:
         verbose_name_plural = "Disciplinas"
@@ -159,9 +159,9 @@ class Disciplina(models.Model):
     
 
 class Matricula(models.Model):
-    instituicao = models.ForeignKey(Instituicao, on_delete=models.CASCADE)
-    curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
-    pessoa = models.ForeignKey(Pessoa, on_delete=models.CASCADE)
+    instituicao = models.ForeignKey(Instituicao, on_delete=models.CASCADE, default='')
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE, default='')
+    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE, default='')
     data_inicio = models.DateField(default='2000-01-01', verbose_name="data de início")
     data_previsao_termino = models.DateField(default='2000-01-01', verbose_name="previsão de término")
 
@@ -169,34 +169,34 @@ class Matricula(models.Model):
         verbose_name_plural = "Matrículas"
 
     def __str__(self):
-        return f'{self.pessoa}, {self.curso}, {self.instituicao}'
+        return f'{self.aluno}, {self.curso}, {self.instituicao}'
     
 
 class Frequencia(models.Model):
-    curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
-    disciplina = models.ForeignKey(Disciplina, on_delete = models.CASCADE)
-    pessoa = models.ForeignKey(Pessoa, on_delete=models.CASCADE)
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE, default='')
+    disciplina = models.ForeignKey(Disciplina, on_delete = models.CASCADE, default='')
+    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE, default='')
     numero_faltas = models.IntegerField(verbose_name="Número de Faltas")
 
     class Meta:
         verbose_name_plural = "Frequências"
 
     def __str__(self):
-        return f'{self.pessoa}, {self.disciplina}, {self.numero_faltas}'
+        return f'{self.aluno}, {self.disciplina}, {self.numero_faltas}'
     
 
 class Ocorrencia(models.Model):
-    descricao = models.CharField(max_length=255)
+    descricao = models.CharField(max_length=255, default='')
     data = models.DateField(default='2000-01-01')
-    curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
-    disciplina = models.ForeignKey(Disciplina, on_delete=models.CASCADE)
-    pessoa = models.ForeignKey(Pessoa, on_delete=models.CASCADE)
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE, default='')
+    disciplina = models.ForeignKey(Disciplina, on_delete=models.CASCADE, default='')
+    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE, default='')
 
     class Meta:
          verbose_name_plural = "Ocorrências"
 
     def __str__(self):
-        return f'{self.descricao}, {self.pessoa}'
+        return f'{self.descricao}, {self.aluno}'
 
 
 class TipoAvaliacao(models.Model):
@@ -215,7 +215,7 @@ class Avaliacao(models.Model):
     disciplina = models.ForeignKey(Disciplina, on_delete=models.CASCADE)
     nota = models.DecimalField(max_digits=5, decimal_places=2)
     tipo_avaliacao = models.ForeignKey(TipoAvaliacao, on_delete=models.CASCADE, default='')
-    pessoa = models.ForeignKey(Pessoa, on_delete=models.CASCADE, default='')
+    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE, default='')
 
     class Meta:
          verbose_name_plural = "Avaliações"
